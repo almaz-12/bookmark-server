@@ -3,7 +3,7 @@ const router = express.Router();
 
 // GET /api/user - Получение пользователя
 router.get('/', (req, res) => {
-  res.json({name: 'Алмаз'});
+  res.json({ name: 'Алмаз', avatar: '/avatar.png' });
 });
 
 module.exports = router;

@@ -13,20 +13,20 @@ app.use(express.json());
 
 // Routes
 app.use('/api/categories', categoriesRoutes);
-app.use('/api', bookmarksRoutes);
+app.use('/api/bookmarks', bookmarksRoutes);
 app.use('/api/user', userRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
-    console.error(err.stack);
-    res.status(500).json({ error: 'Something went wrong!' });
+  console.error(err.stack);
+  res.status(500).json({ error: 'Something went wrong!' });
 });
 
 // 404 handler
 app.use((req, res) => {
-    res.status(404).json({ error: 'Endpoint not found' });
+  res.status(404).json({ error: 'Endpoint not found' });
 });
 
 app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
+  console.log(`Server is running on http://localhost:${PORT}`);
 });

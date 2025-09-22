@@ -3,6 +3,7 @@ const cors = require('cors');
 const categoriesRoutes = require('./routes/categories');
 const bookmarksRoutes = require('./routes/bookmarks');
 const userRoutes = require('./routes/users');
+const loginRoutes = require('./routes/login');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -15,6 +16,7 @@ app.use(express.json());
 app.use('/api/categories', categoriesRoutes);
 app.use('/api/bookmarks', bookmarksRoutes);
 app.use('/api/user', userRoutes);
+app.use('/api/login', loginRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

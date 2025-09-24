@@ -3,6 +3,13 @@ const router = express.Router();
 
 // POST /api/login - Получение токена
 router.post('/', (req, res) => {
+  const { email, password } = req.body;
+
+  // костыль для учебного проекта
+  if (!email || email != 'test@test.ru' || !password) {
+    return res.status(400).json({ error: 'Пользователь не найден' });
+  }
+
   // только для учебного проекта
   res.json({
     token:

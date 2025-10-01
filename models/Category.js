@@ -7,7 +7,7 @@ class Category {
             SELECT c.*,
                    (SELECT COUNT(*) FROM bookmarks WHERE category_id = c.id) as bookmarks
             FROM categories c
-            ORDER BY c.name
+            ORDER BY c.id
         `,
       callback
     );
@@ -27,10 +27,10 @@ class Category {
     );
   }
 
-  static update(id, name, alias, callback) {
+  static update(id, name, callback) {
     db.run(
-      'UPDATE categories SET name = ?, alias = ? WHERE id = ?',
-      [name, alias, id],
+      'UPDATE categories SET name = ? WHERE id = ?',
+      [name, id],
       function (err) {
         callback(err, this.changes);
       }

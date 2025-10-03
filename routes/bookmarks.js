@@ -5,11 +5,11 @@ const Bookmark = require('../models/Bookmark');
 // GET /api/bookmarks/:categoryId/bookmarks - Получение закладок с фильтрами
 router.get('/:categoryId', (req, res) => {
   const { categoryId } = req.params;
-  const { title, date } = req.query;
+  const { sortBy, sortOrder } = req.query;
 
   const filters = {};
-  if (title) filters.title = title;
-  if (date) filters.date = date;
+  if (sortBy) filters.sortBy = sortBy;
+  if (sortOrder) filters.sortOrder = sortOrder;
 
   Bookmark.getByCategory(categoryId, filters, (err, bookmarks) => {
     if (err) {

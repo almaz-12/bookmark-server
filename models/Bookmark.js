@@ -3,23 +3,35 @@ const db = require('../database/db');
 class Bookmark {
   static getByCategory(categoryId, filters = {}, callback) {
     let query = `
-            SELECT b.*
-            FROM bookmarks b
-            WHERE b.category_id = ?
-        `;
+        SELECT b.*
+        FROM bookmarks b
+        WHERE b.category_id = ?
+    `;
     let params = [categoryId];
 
-    if (filters.title) {
-      query += ' AND b.title LIKE ?';
-      params.push(`%${filters.title}%`);
+    // Определяем поле и направление сортировки
+    let sortField = 'created_at'; // поле по умолчанию
+    let sortOrder = 'DESC'; // направление по умолчанию
+
+    if (filters.sortBy) {
+      // Разрешенные поля для сортировки (для безопасности)
+      const allowedFields = ['title', 'created_at', 'updated_at', 'id'];
+      if (allowedFields.includes(filters.sortBy)) {
+        sortField = filters.sortBy;
+      }
     }
 
-    if (filters.date) {
-      query += ' AND DATE(b.created_at) = ?';
-      params.push(filters.date);
+    if (filters.sortOrder) {
+      // Проверяем допустимые направления сортировки
+      if (
+        filters.sortOrder.toUpperCase() === 'ASC' ||
+        filters.sortOrder.toUpperCase() === 'DESC'
+      ) {
+        sortOrder = filters.sortOrder.toUpperCase();
+      }
     }
 
-    query += ' ORDER BY b.created_at DESC';
+    query += ` ORDER BY b.${sortField} ${sortOrder}`;
 
     db.all(query, params, callback);
   }

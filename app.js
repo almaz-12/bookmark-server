@@ -17,6 +17,7 @@ app.use('/api/categories', categoriesRoutes);
 app.use('/api/bookmarks', bookmarksRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/login', loginRoutes);
+app.use('/uploads', express.static('uploads'));
 
 // Error handling middleware
 app.use((err, req, res, next) => {

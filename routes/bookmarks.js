@@ -1,6 +1,35 @@
 const express = require('express');
 const router = express.Router();
+const multer = require('multer');
+const path = require('path');
 const Bookmark = require('../models/Bookmark');
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'uploads/');
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+    cb(
+      null,
+      file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname)
+    );
+  },
+});
+
+const upload = multer({
+  storage: storage,
+  limits: {
+    fileSize: 5 * 1024 * 1024, // 5MB limit
+  },
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype.startsWith('image/')) {
+      cb(null, true);
+    } else {
+      cb(new Error('Only image files are allowed!'), false);
+    }
+  },
+});
 
 // GET /api/bookmarks/:categoryId/bookmarks - Получение закладок с фильтрами
 router.get('/:categoryId', (req, res) => {
@@ -20,14 +49,16 @@ router.get('/:categoryId', (req, res) => {
 });
 
 // POST /api/bookmarks/:categoryId - Создание закладки
-router.post('/:categoryId', (req, res) => {
+router.post('/:categoryId', upload.single('image'), (req, res) => {
   const { categoryId } = req.params;
-  const { url, title, description, image } = req.body;
+  const { url, title, description } = req.body;
 
-  console.log(req.body);
+  // Путь к загруженному файлу
+  console.log(req.file);
+  const imagePath = req.file ? `/uploads/${req.file.filename}` : '';
 
-  if (!url) {
-    return res.status(400).json({ error: 'URL is required' });
+  if (!url && !imagePath) {
+    return res.status(400).json({ error: 'Either URL or image is required' });
   }
 
   Bookmark.create(
@@ -35,7 +66,7 @@ router.post('/:categoryId', (req, res) => {
     url,
     title,
     description,
-    image,
+    imagePath,
     (err, bookmark) => {
       if (err) {
         return res.status(400).json({ error: err.message });
